@@ -23,7 +23,9 @@ struct fetch_report
     std::vector<directory_entry> sounds;  
     std::vector<directory_entry> scenes;  
     std::vector<directory_entry> scripts;  
-    std::vector<directory_entry> shaders;  
+    std::vector<directory_entry> shaders;
+    std::vector<directory_entry> other;
+    
     int total_files_count = 0;
     int total_folders_count = 0;
     int editor_files_count = 0;
@@ -99,6 +101,10 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
     {
         fetch_report_value.shaders.push_back(entry);
     }
+    else
+    {
+        fetch_report_value.other.push_back(entry);
+    }
 }
 
 
@@ -137,7 +143,22 @@ fetch_report fetch(recursive_directory_iterator project_folder)
 }
 
 
-
+void present_information(fetch_report fetch_result)
+{
+    cout << "Total folders: " << fetch_result.total_folders_count << "\n";
+    cout << "Excluding editor folders: " << fetch_result.total_folders_count - fetch_result.editor_folders_count << "\n";
+    cout << "Total files (excluding folders): " << fetch_result.total_files_count << "\n";
+    cout << "Excluding editor files: " << fetch_result.total_files_count - fetch_result.editor_files_count << "\n";
+    
+    cout << "-------------------------\n"; 
+    cout << "More detailed information about files: \n";
+    cout << "Images count: " << fetch_result.images.size() << " (and " << fetch_result.vector_images.size() << " vector images) \n";
+    cout << "Sound files count: " << fetch_result.sounds.size() << "\n";
+    cout << "Saved scenes count: " << fetch_result.scenes.size() << "\n";
+    cout << "Scripts count: " << fetch_result.scripts.size() << "\n";
+    cout << "Saved shaders count: " << fetch_result.shaders.size() << "\n";
+    
+}
 
 int main()
 {
@@ -169,17 +190,7 @@ int main()
     cout << "Fetching... \n";
     
     fetch_report fetch_result = fetch(project_folder);
-    
-    cout << "Total folders: " << fetch_result.total_folders_count << "\n";
-    cout << "Excluding editor folders: " << fetch_result.total_folders_count - fetch_result.editor_folders_count << "\n";
-    cout << "Total files (excluding folders): " << fetch_result.total_files_count << "\n";
-    cout << "Excluding editor files: " << fetch_result.total_files_count - fetch_result.editor_files_count << "\n";
-    
-    
-    cout << "-------------------------\n"; 
-    cout << "More detailed information: \n";
-    cout << "Images count: " << fetch_result.images.size() << " (and " << fetch_result.vector_images.size() << " vector images) \n";
-    cout << "Sound files count: " << fetch_result.sounds.size() << "\n";
+    present_information(fetch_result);
     
     return 0;
 }
