@@ -164,7 +164,6 @@ fetch_report fetch(recursive_directory_iterator project_folder, const std::vecto
             continue;
         }
         
-        
         if(entry.is_directory())
         {
             fetch_report_value.total_folders_count++;
@@ -221,12 +220,11 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             position++;
         }
         cout << "\n";
-        
     }
-    char answer;
     
     cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
     cout << "Write \"e\" if you want to exit blacklist menu\n";
+    char answer;
     while(answer != 'e')
     {
         validate_answer(answer, "a r e");
@@ -256,7 +254,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
         }
         else if(answer == 'r')
         {
-            
             if(blacklisted_list.empty())
             {
                 cout << "\nError: can't remove anything from empty blacklist!\n\n";
