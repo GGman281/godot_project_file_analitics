@@ -2,7 +2,6 @@
 #include<filesystem>
 #include<vector>
 
-
 namespace filesystem = std::filesystem;
 // filesystem
 using filesystem::exists;
@@ -291,7 +290,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             
             blacklisted_list.erase(blacklisted_list.begin() + number - 1);
             
-            
             cout << "Delete another one?\n";
             cout << "(y/n): ";
             cin >> answer;
@@ -303,9 +301,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
                 continue;
             }
             answer = ' ';
-            
-            
-            
             continue;
         }
     }
@@ -320,22 +315,9 @@ void display_category_content(const std::vector<directory_entry> category)
         return;
     }
     
-    cout << "How would you like information to be displayed? \n";
-    cout << "Write \"f\" for files only, \"d\" for directories only (folders only), \"a\" for both: ";
-    char type;
-    cin >> type;
-    validate_answer(type, "f d a");
-    
     for(const directory_entry& item : category)
     {
-        if(item.is_directory() && (type == 'd' || type == 'a'))
-        {
-            cout << item.path().string() << "\n";
-        }
-        else
-        {
-            cout << item.path().string() << "\n";
-        }
+        cout << item.path().string() << "\n";
     }
 }
 
