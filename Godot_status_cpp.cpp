@@ -189,13 +189,11 @@ fetch_report fetch(recursive_directory_iterator project_folder, const std::vecto
 
 void present_information(fetch_report fetch_result)
 {
+    cout << "-------------------------\n"; 
     cout << "Total folders: " << fetch_result.total_folders_count << "\n";
     cout << "Excluding blacklisted folders: " << fetch_result.total_folders_count - fetch_result.blacklisted_folders_count << "\n";
     cout << "Total files (excluding folders): " << fetch_result.total_files_count << "\n";
     cout << "Excluding blacklisted files: " << fetch_result.total_files_count - fetch_result.blacklisted_files_count << "\n";
-    
-    cout << "-------------------------\n"; 
-    cout << "More detailed information about files: \n";
     cout << "Images count: " << fetch_result.images.size() << " (and " << fetch_result.vector_images.size() << " vector images) \n";
     cout << "Sound files count: " << fetch_result.sounds.size() << "\n";
     cout << "Saved scenes count: " << fetch_result.scenes.size() << "\n";
@@ -203,10 +201,13 @@ void present_information(fetch_report fetch_result)
     cout << "Saved shaders count: " << fetch_result.shaders.size() << "\n";
     cout << "Other project files count: " << fetch_result.other.size() << "\n";
     cout << "Heaviest file: "<< fetch_result.heaviest.path().string() << " (" << std::setprecision(3) << std::fixed << fetch_result.heaviest.file_size()/1000.0 << " kb)\n";
+    cout << "-------------------------\n"; 
 }
 
 void blacklist_change(std::vector<string>& blacklisted_list)
 {
+    cout << "Warning! Filter works by detecting keywords in file's path.\n";
+    cout << "files with \".godot\" extension (project.godot for example) cannot be blacklisted!\n";
     if(blacklisted_list.empty())
     {
         cout << "\nBlacklist is empty.\n\n";
@@ -224,6 +225,9 @@ void blacklist_change(std::vector<string>& blacklisted_list)
         
     }
     char answer;
+    
+    cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
+    cout << "Write \"e\" if you want to exit blacklist menu\n";
     while(answer != 'e')
     {
         validate_answer(answer, "a r e");
@@ -307,27 +311,86 @@ void blacklist_change(std::vector<string>& blacklisted_list)
     }
 }
 
+
+void display_category_content(const std::vector<directory_entry> category)
+{
+    if(category.empty())
+    {
+        cout << "\nCategory is empty.\n\n";
+        return;
+    }
+    
+    cout << "How would you like information to be displayed? \n";
+    cout << "Write \"f\" for files only, \"d\" for directories only (folders only), \"a\" for both: ";
+    char type;
+    cin >> type;
+    validate_answer(type, "f d a");
+    
+    for(const directory_entry& item : category)
+    {
+        if(item.is_directory() && (type == 'd' || type == 'a'))
+        {
+            cout << item.path().string() << "\n";
+        }
+        else
+        {
+            cout << item.path().string() << "\n";
+        }
+    }
+}
+
 void category_view(fetch_report fetch_result, char& answer)
 {
-    cout << "Which chategory's files would you like to display? \n";
-    cout << "1) Images\n";
-    cout << "2) Vector images\n";
-    cout << "3) Sounds\n";
-    cout << "4) Saved scenes\n";
-    cout << "5) Scripts\n";
-    cout << "6) Saved shaders\n";
-    cout << "7) Other files\n";
-    cout << "\"e\" to exit\n";
-    
-    cin >> answer;
-    validate_answer(answer, "1 2 3 4 5 6 7 e");
-    //TODO: continue this
+    while(answer != 'e')
+    {
+        cout << "Which chategory's files would you like to display? \n";
+        cout << "1) Images\n";
+        cout << "2) Vector images\n";
+        cout << "3) Sounds\n";
+        cout << "4) Saved scenes\n";
+        cout << "5) Scripts\n";
+        cout << "6) Saved shaders\n";
+        cout << "7) Other files\n";
+        cout << "\"e\" to exit\n";
+        
+        cin >> answer;
+        validate_answer(answer, "1 2 3 4 5 6 7 e");
+        
+        switch(answer)
+        {
+            case '1':
+                display_category_content(fetch_result.images);
+                break;
+            case '2':
+                display_category_content(fetch_result.vector_images);
+                break;
+            case '3':
+                display_category_content(fetch_result.sounds);
+                break;
+            case '4':
+                display_category_content(fetch_result.scenes);
+                break;
+            case '5':
+                display_category_content(fetch_result.scripts);
+                break;
+            case '6':
+                display_category_content(fetch_result.shaders);
+                break;
+            case '7':
+                display_category_content(fetch_result.other);
+                break;
+            default:
+                cout << "you're not supposed to see this message.\n"; 
+                break;
+        }
+    }
 }
+
 
 
 int main()
 {
-    std::vector<string> blacklist;// = {".godot"};
+    std::vector<string> blacklist = {".godot"};
     string directory = "";
     char answer;
     recursive_directory_iterator project_folder;
@@ -358,7 +421,7 @@ int main()
     cout << "Would you like to change blacklist options? (y/n): ";
     cin >> answer;
     validate_answer(answer, "y n");
-    if(answer = 'y')
+    if(answer == 'y')
     {
         blacklist_change(blacklist);
     }
@@ -368,7 +431,6 @@ int main()
     
     cout << "Done! outputing results... \n";
     present_information(fetch_result);
-    
     
     cout << "Would you like to view the files of certain category? \n";
     cout << "(y/n) ";
@@ -382,10 +444,7 @@ int main()
         return 0;
     }
     
-    cout << "Cathegory view is WIP\n";
-    //category_view(fetch_result, answer);
-    
-    
+    category_view(fetch_result, answer);
     
     return 0;
 }
