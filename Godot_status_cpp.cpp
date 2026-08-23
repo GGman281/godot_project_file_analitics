@@ -134,20 +134,22 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
 
 bool is_blacklisted(const directory_entry& entry, const std::vector<string> blacklisted_list, fetch_report& fetch_report_value)
 {
-    // TODO: apply the new changes
-    if(entry.path().string().find(".godot") != string::npos )
+    for(const string blacklisted_item : blacklisted_list)
     {
-        if(entry.is_directory())
+        if(entry.path().string().find(blacklisted_item) != string::npos && entry.path().filename().extension() != ".godot")
         {
-            fetch_report_value.total_folders_count++;
-            fetch_report_value.blacklisted_folders_count++;
+            if(entry.is_directory())
+            {
+                fetch_report_value.total_folders_count++;
+                fetch_report_value.blacklisted_folders_count++;
+            }
+            else if(entry.is_regular_file())
+            {
+                fetch_report_value.total_files_count++;
+                fetch_report_value.blacklisted_files_count++;
+            }
+            return true;
         }
-        else if(entry.is_regular_file())
-        {
-            fetch_report_value.total_files_count++;
-            fetch_report_value.blacklisted_files_count++;
-        }
-        return true;
     }
     return false;
 }
