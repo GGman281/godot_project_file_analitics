@@ -17,14 +17,19 @@ using std::string;
 
 struct fetch_report
 {
-    std::vector<directory_entry> images;
-    std::vector<directory_entry> vector_images;
-    std::vector<directory_entry> sounds;  
-    std::vector<directory_entry> scenes;  
-    std::vector<directory_entry> scripts;  
-    std::vector<directory_entry> shaders;
-    std::vector<directory_entry> import;
-    std::vector<directory_entry> other;
+    std::vector<directory_entry> types[8];
+    // order
+    std::string type_names[8] = {
+        "Images",
+        "Vector images",
+        "Sounds", 
+        "Saved scenes", 
+        "Scripts", 
+        "Shaders",
+        "Import",
+        "Other"
+    };
+    
     directory_entry heaviest;
     
     int total_files_count = 0;
@@ -97,41 +102,41 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
     // for images check
     if(find(SUPPORTED_RASTER_IMAGE_EXTENSIONS, std::end(SUPPORTED_RASTER_IMAGE_EXTENSIONS), FILE_EXTENSION) != std::end(SUPPORTED_RASTER_IMAGE_EXTENSIONS))
     {
-        fetch_report_value.images.push_back(entry);
+        fetch_report_value.types[0].push_back(entry);
     }
     // vector image format
     else if(FILE_EXTENSION == ".svg") 
     {
-        fetch_report_value.vector_images.push_back(entry);
+        fetch_report_value.types[1].push_back(entry);
     }
     // sounds or music (there usually no significant distinction since both can be the same length or volume)
     else if(find(SUPPORTED_SOUND_EXTENSIONS, std::end(SUPPORTED_SOUND_EXTENSIONS), FILE_EXTENSION) != std::end(SUPPORTED_SOUND_EXTENSIONS))
     {
-        fetch_report_value.sounds.push_back(entry); 
+        fetch_report_value.types[2].push_back(entry); 
     }
     // game scenes
     else if(FILE_EXTENSION == ".tscn")
     {
-        fetch_report_value.scenes.push_back(entry);
+        fetch_report_value.types[3].push_back(entry);
     }
     // game scripts
     else if(FILE_EXTENSION == ".gd")
     {
-        fetch_report_value.scripts.push_back(entry);
+        fetch_report_value.types[4].push_back(entry);
     }
     // game shaders. In godot 3.x extensions differ
     else if(FILE_EXTENSION == ".gdshader" || FILE_EXTENSION == ".shader")
     {
-        fetch_report_value.shaders.push_back(entry);
+        fetch_report_value.types[5].push_back(entry);
     }
     // import files
     else if(FILE_EXTENSION == ".import")
     {
-        fetch_report_value.import.push_back(entry);
+        fetch_report_value.types[6].push_back(entry);
     }
     else 
     {
-        fetch_report_value.other.push_back(entry);
+        fetch_report_value.types[7].push_back(entry);
     }
     
 }
@@ -197,13 +202,11 @@ void present_information(fetch_report fetch_result)
     cout << "Excluding blacklisted folders: " << fetch_result.total_folders_count - fetch_result.blacklisted_folders_count << "\n";
     cout << "Total files (excluding folders): " << fetch_result.total_files_count << "\n";
     cout << "Excluding blacklisted files: " << fetch_result.total_files_count - fetch_result.blacklisted_files_count << "\n";
-    cout << "Images count: " << fetch_result.images.size() << " (and " << fetch_result.vector_images.size() << " vector images) \n";
-    cout << "Sound files count: " << fetch_result.sounds.size() << "\n";
-    cout << "Saved scenes count: " << fetch_result.scenes.size() << "\n";
-    cout << "Scripts count: " << fetch_result.scripts.size() << "\n";
-    cout << "Saved shaders count: " << fetch_result.shaders.size() << "\n";
-    cout << "Import files count: " << fetch_result.other.size() << "\n";
-    cout << "Other project files count: " << fetch_result.other.size() << "\n";
+    cout << "Images count: " << fetch_result.types[0].size() << " (and " << fetch_result.types[1].size() << " vector images) \n";
+    for(int i = 2; i < std::distance(std::begin(fetch_result.types), std::end(fetch_result.types)); i++)
+    {
+        cout << fetch_result.type_names[i] << " files count: " << fetch_result.types[i].size() << "\n";
+    }
     cout << "Heaviest file: "<< fetch_result.heaviest.path().string() << " (" << std::setprecision(3) << std::fixed << fetch_result.heaviest.file_size()/1000.0 << " kb)\n";
     cout << "-------------------------\n"; 
 }
@@ -324,54 +327,27 @@ void display_category_content(const std::vector<directory_entry> category)
     }
 }
 
-void category_view(fetch_report fetch_result, char& answer)
+void category_view(fetch_report fetch_result)
 {
-    while(answer != 'e')
+    string answer;
+    while(answer != "e")
     {
         cout << "Which chategory's files would you like to display? \n";
-        cout << "1) Images\n";
-        cout << "2) Vector images\n";
-        cout << "3) Sounds\n";
-        cout << "4) Saved scenes\n";
-        cout << "5) Scripts\n";
-        cout << "6) Saved shaders\n";
-        cout << "8) import files\n";
-        cout << "7) Other files\n";
+        int type_amount = std::distance(std::begin(fetch_result.types), std::end(fetch_result.types));
+        for(int i = 0; i < type_amount; i++)
+        {
+            cout << i+1 << ") " << fetch_result.type_names[i] << "\n";
+        }
         cout << "\"e\" to exit\n";
         
         cin >> answer;
-        validate_answer(answer, "1 2 3 4 5 6 7 e");
-        
-        switch(answer)
+        while(answer.length() == 0 || (stoi(answer)-1 < 0 || stoi(answer)-1 >= type_amount))
         {
-            case '1':
-                display_category_content(fetch_result.images);
-                break;
-            case '2':
-                display_category_content(fetch_result.vector_images);
-                break;
-            case '3':
-                display_category_content(fetch_result.sounds);
-                break;
-            case '4':
-                display_category_content(fetch_result.scenes);
-                break;
-            case '5':
-                display_category_content(fetch_result.scripts);
-                break;
-            case '6':
-                display_category_content(fetch_result.shaders);
-                break;
-            case '7':
-                display_category_content(fetch_result.import);
-                break;
-            case '8':
-                display_category_content(fetch_result.other);
-                break;
-            default:
-                cout << "you're not supposed to see this message.\n"; 
-                break;
+            cout << "Please enter a valid answer: ";
+            cin >> answer;
         }
+        display_category_content(fetch_result.types[stoi(answer)-1]);
+        cout << "\n\n";
     }
 }
 
@@ -433,7 +409,7 @@ int main()
         return 0;
     }
     
-    category_view(fetch_result, answer);
+    category_view(fetch_result);
     
     return 0;
 }
