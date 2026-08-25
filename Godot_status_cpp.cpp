@@ -23,6 +23,7 @@ struct fetch_report
     std::vector<directory_entry> scenes;  
     std::vector<directory_entry> scripts;  
     std::vector<directory_entry> shaders;
+    std::vector<directory_entry> import;
     std::vector<directory_entry> other;
     directory_entry heaviest;
     
@@ -90,7 +91,6 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
         ".webp"};
     const string SUPPORTED_SOUND_EXTENSIONS[3] = {".wav", ".ogg", ".mp3"};
     
-    
     const string FILE_EXTENSION = entry.path().filename().extension().string();
     
     
@@ -124,7 +124,12 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
     {
         fetch_report_value.shaders.push_back(entry);
     }
-    else
+    // import files
+    else if(FILE_EXTENSION == ".import")
+    {
+        fetch_report_value.import.push_back(entry);
+    }
+    else 
     {
         fetch_report_value.other.push_back(entry);
     }
@@ -197,6 +202,7 @@ void present_information(fetch_report fetch_result)
     cout << "Saved scenes count: " << fetch_result.scenes.size() << "\n";
     cout << "Scripts count: " << fetch_result.scripts.size() << "\n";
     cout << "Saved shaders count: " << fetch_result.shaders.size() << "\n";
+    cout << "Import files count: " << fetch_result.other.size() << "\n";
     cout << "Other project files count: " << fetch_result.other.size() << "\n";
     cout << "Heaviest file: "<< fetch_result.heaviest.path().string() << " (" << std::setprecision(3) << std::fixed << fetch_result.heaviest.file_size()/1000.0 << " kb)\n";
     cout << "-------------------------\n"; 
@@ -329,6 +335,7 @@ void category_view(fetch_report fetch_result, char& answer)
         cout << "4) Saved scenes\n";
         cout << "5) Scripts\n";
         cout << "6) Saved shaders\n";
+        cout << "8) import files\n";
         cout << "7) Other files\n";
         cout << "\"e\" to exit\n";
         
@@ -356,6 +363,9 @@ void category_view(fetch_report fetch_result, char& answer)
                 display_category_content(fetch_result.shaders);
                 break;
             case '7':
+                display_category_content(fetch_result.import);
+                break;
+            case '8':
                 display_category_content(fetch_result.other);
                 break;
             default:
