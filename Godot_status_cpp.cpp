@@ -213,8 +213,10 @@ void present_information(fetch_report fetch_result)
 
 void blacklist_change(std::vector<string>& blacklisted_list)
 {
-    cout << "Warning! Filter works by detecting keywords in file's path.\n";
+    cout << "Warning!\n";
+    cout << "Filter works by detecting keywords in file's path.\n";
     cout << "files with \".godot\" extension (project.godot for example) cannot be blacklisted!\n";
+    cout << "\n";
     if(blacklisted_list.empty())
     {
         cout << "\nBlacklist is empty.\n\n";
@@ -231,19 +233,20 @@ void blacklist_change(std::vector<string>& blacklisted_list)
         cout << "\n";
     }
     
-    cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
-    cout << "Write \"e\" if you want to exit blacklist menu\n";
     char answer;
     while(answer != 'e')
     {
+        if(answer !='a' && answer != 'r')
+        {
+            cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
+            cout << "Write \"e\" if you want to exit blacklist menu\n";
+        }
         validate_answer(answer, "a r e");
         
         if(answer == 'a')
         {
             string directory = "";
-            cout << "(Warning) Please keep in mind this program doesn't check for typos or if the folder even exists!\n";
-            cout << "Provide folder's relative or absolute path you want to blacklist: ";
-            
+            cout << "What would you like to add: ";
             cin.ignore(); // apparently it keeps \n here from previous entry and puts it as answer for next getline
             getline(cin, directory);
             
@@ -255,8 +258,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             validate_answer(answer, "y n");
             if(answer == 'n')
             {
-                cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
-                cout << "Write \"e\" if you want to exit blacklist menu\n";
                 continue;
             }
             answer = 'a';
@@ -267,8 +268,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             {
                 cout << "\nError: can't remove anything from empty blacklist!\n\n";
                 answer = ' ';
-                cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
-                cout << "Write \"e\" if you want to exit blacklist menu\n";
                 continue;
             }
             cout << "\nBlacklist contains: \n";
@@ -302,11 +301,9 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             validate_answer(answer, "y n");
             if(answer == 'n')
             {
-                cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
-                cout << "Write \"e\" if you want to exit blacklist menu\n";
                 continue;
             }
-            answer = ' ';
+            answer = 'r';
             continue;
         }
     }
