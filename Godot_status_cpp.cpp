@@ -279,7 +279,7 @@ void blacklist_change(std::vector<string>& blacklisted_list)
                 position++;
             }
             cout << "\n";
-            cout << "Put the number of a cathegory you want to delete. (Yor put -1 to go back to cancel): ";
+            cout << "Put the number of a category you want to delete. (Yor put -1 to go back to cancel): ";
             int number;
             cin >> number;
             if(number == -1)
@@ -312,7 +312,6 @@ void blacklist_change(std::vector<string>& blacklisted_list)
     }
 }
 
-
 void display_category_content(const std::vector<directory_entry> category)
 {
     if(category.empty())
@@ -341,6 +340,10 @@ void category_view(fetch_report fetch_result)
         cout << "\"e\" to exit\n";
         
         cin >> answer;
+        if(answer == "e")
+        {
+            return;
+        }
         while(answer.length() == 0 || (stoi(answer)-1 < 0 || stoi(answer)-1 >= type_amount))
         {
             cout << "Please enter a valid answer: ";
