@@ -1,4 +1,5 @@
-#include<iostream>
+#pragma once
+
 #include<filesystem>
 #include<vector>
 #include<string>
@@ -10,8 +11,6 @@ namespace filesystem = std::filesystem;
 using filesystem::directory_entry;
 
 // std
-using std::cout;
-using std::cin;
 using std::string;
 
 void present_information(const fetch_report& fetch_result);

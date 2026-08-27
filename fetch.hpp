@@ -1,13 +1,13 @@
+#pragma once
+
 #include<filesystem>
 #include<vector>
 #include<string>
 
-#pragma once
+
 
 // filesystem
 namespace filesystem = std::filesystem;
-using filesystem::exists;
-using filesystem::is_directory;
 using filesystem::recursive_directory_iterator;
 using filesystem::directory_entry;
 

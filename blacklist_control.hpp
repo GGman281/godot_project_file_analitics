@@ -1,4 +1,5 @@
-#include<iostream>
+#pragma once
+
 #include<filesystem>
 #include<vector>
 #include<string>

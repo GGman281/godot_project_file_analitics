@@ -1,6 +1,12 @@
 #include <cctype>
+#include<iostream>
 #include "validation.hpp"
 
+
+// std
+using std::cout;
+using std::cin;
+using std::getline;
 
 
 char validate_answer(const string& possible_answers)

@@ -1,5 +1,8 @@
 #include "fetch.hpp"
 
+// filesystem
+using filesystem::exists;
+using filesystem::is_directory;
 
 
 void check_file_type(fetch_report& fetch_report_value, const directory_entry& entry)
@@ -71,7 +74,11 @@ fetch_report fetch(const string& directory, const std::vector<string>& blacklist
     for(const directory_entry& entry : project_folder)
     {
         if(is_blacklisted(entry, blacklisted_list, fetch_report_value))
-        {
+        {   
+            if(entry.is_directory())
+            {
+                project_folder.disable_recursion_pending();
+            }
             continue;
         }
         

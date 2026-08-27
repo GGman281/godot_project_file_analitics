@@ -1,5 +1,11 @@
+#include<iostream>
 #include "category_view.hpp"
 
+
+//std
+using std::cout;
+using std::cin;
+using std::getline;
 
 void present_information(const fetch_report& fetch_result)
 {
@@ -44,17 +50,44 @@ void category_view(const fetch_report& fetch_result)
         }
         cout << "\"e\" to exit\n";
         
-        cin >> answer;
-        if(answer == "e")
+        
+        bool valid_answer = false;
+        int category = 0;
+        
+        while(!valid_answer)
         {
-            return;
+            getline(cin, answer);
+            if(answer == "e")
+            {
+                return;
+            }
+            
+            try
+            {
+                category = stoi(answer);
+            }
+            catch(const std::invalid_argument&)
+            {
+                cout << "Not a valid answer. Try again: ";
+                continue;
+            }
+            catch(const std::out_of_range&)
+            {
+                cout << "Number is too big. Try again: ";
+                continue;
+            }
+            
+            if(category < 1 || category > type_amount)
+            {
+                cout << "Please enter a valid answer: ";
+            }
+            else
+            {
+                valid_answer = true;
+            }
         }
-        while(answer.length() == 0 || (stoi(answer)-1 < 0 || stoi(answer)-1 >= type_amount))
-        {
-            cout << "Please enter a valid answer: ";
-            cin >> answer;
-        }
-        display_category_content(fetch_result.types[stoi(answer)-1]);
+        
+        display_category_content(fetch_result.types[category-1]);
         cout << "\n\n";
     }
 }

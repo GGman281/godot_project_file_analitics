@@ -1,6 +1,5 @@
 #pragma once
 
-#include<iostream>
 #include<filesystem>
 #include<string>
 
@@ -13,9 +12,6 @@ using filesystem::recursive_directory_iterator;
 using filesystem::directory_entry;
 
 // std
-using std::cout;
-using std::cin;
-using std::getline;
 using std::string;
 
 char validate_answer(const string& possible_answers);
