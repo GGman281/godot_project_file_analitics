@@ -1,10 +1,12 @@
+#include <cctype>
 #include "validation.hpp"
 
 
 
-
-void validate_answer(char& answer, const string& possible_answers)
+char validate_answer(const string& possible_answers)
 {
+    char answer;
+    cin >> answer;
     // answer = given answer by user
     // possible_answers = answers that are accessible. Spacebar doesn't count and can be used as a separator
     answer = (char)tolower(answer);
@@ -25,23 +27,31 @@ void validate_answer(char& answer, const string& possible_answers)
         cout << "): ";
         cin >> answer;
     }
+    return answer;
 }
 
 void get_valid_directory(string& directory)
 {
-    cout << "Please enter a valid directory: ";
     getline(cin, directory);
+    while( !exists(directory) || !is_directory(directory) )
+    {
+        cout << "Please enter a valid directory: ";
+        getline(cin, directory);
+    }
 }
 
 
 
 
-bool is_godot_project(recursive_directory_iterator project_folder)
+bool is_godot_project(const string& directory)
 {
+    recursive_directory_iterator project_folder(directory);
+    
     for(const directory_entry& entry : project_folder)
     {
-        if(!entry.is_directory() && entry.path().filename().extension() == ".godot")
+        if(!entry.is_directory() && entry.path().filename() == "project.godot")
         {
+            cout << "Success! \n";
             return true;
         }
     }

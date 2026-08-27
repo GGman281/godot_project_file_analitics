@@ -1,5 +1,6 @@
 #include<filesystem>
 #include<vector>
+#include<string>
 
 #pragma once
 
@@ -40,7 +41,7 @@ struct fetch_report
 
 void check_file_type(fetch_report& fetch_report_value, const directory_entry& entry);
 
-fetch_report fetch(recursive_directory_iterator project_folder, const std::vector<string>& blacklisted_list);
+fetch_report fetch(const string& directory, const std::vector<string>& blacklisted_list);
 
 bool is_blacklisted(const directory_entry& entry, const std::vector<string>& blacklisted_list, fetch_report& fetch_report_value);
 

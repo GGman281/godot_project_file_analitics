@@ -1,7 +1,7 @@
-#include "cathegory_view.hpp"
+#include "category_view.hpp"
 
 
-void present_information(fetch_report fetch_result)
+void present_information(const fetch_report& fetch_result)
 {
     cout << "-------------------------\n"; 
     cout << "Total folders: " << fetch_result.total_folders_count << "\n";
@@ -31,7 +31,7 @@ void display_category_content(const std::vector<directory_entry>& category)
     }
 }
 
-void category_view(fetch_report fetch_result)
+void category_view(const fetch_report& fetch_result)
 {
     string answer;
     while(answer != "e")

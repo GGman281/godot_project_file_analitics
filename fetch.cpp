@@ -63,8 +63,9 @@ void check_file_type(fetch_report& fetch_report_value, const directory_entry& en
     
 }
 
-fetch_report fetch(recursive_directory_iterator project_folder, const std::vector<string>& blacklisted_list)
+fetch_report fetch(const string& directory, const std::vector<string>& blacklisted_list)
 {
+    recursive_directory_iterator project_folder(directory);
     fetch_report fetch_report_value;
     
     for(const directory_entry& entry : project_folder)

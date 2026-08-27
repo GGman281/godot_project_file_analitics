@@ -1,7 +1,8 @@
+#pragma once
+
 #include<iostream>
 #include<filesystem>
-#include<vector>
-#include "blacklist_control.hpp"
+#include<string>
 
 
 // filesystem
@@ -17,8 +18,8 @@ using std::cin;
 using std::getline;
 using std::string;
 
-void validate_answer(char& answer, const string& possible_answers);
+char validate_answer(const string& possible_answers);
 
 void get_valid_directory(string& directory);
 
-bool is_godot_project(recursive_directory_iterator project_folder);
+bool is_godot_project(const string& directory);

@@ -1,6 +1,11 @@
 #include "validation.hpp"
 #include "blacklist_control.hpp"
+#include <limits>
 
+
+using std::cout;
+using std::cin;
+using std::getline;
 
 bool is_blacklisted(const directory_entry& entry, const std::vector<string>& blacklisted_list, fetch_report& fetch_report_value)
 {
@@ -46,15 +51,15 @@ void blacklist_change(std::vector<string>& blacklisted_list)
         cout << "\n";
     }
     
-    char answer;
+    char answer = ' ';
     while(answer != 'e')
     {
         if(answer !='a' && answer != 'r')
         {
             cout << "Write \"a\" to add item or \"r\" to remove item from the list;\n";
             cout << "Write \"e\" if you want to exit blacklist menu\n";
+            answer = validate_answer("a r e");
         }
-        validate_answer(answer, "a r e");
         
         if(answer == 'a')
         {
@@ -62,13 +67,16 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             cout << "What would you like to add: ";
             cin.ignore(); // apparently it keeps \n here from previous entry and puts it as answer for next getline
             getline(cin, directory);
-            
+            if(directory.length() == 0)
+            {
+                cout << "Empty field detected. Not added anything.\n";
+                continue;
+            }
             blacklisted_list.push_back(directory);
             
             cout << "Add another one?\n";
             cout << "(y/n): ";
-            cin >> answer;
-            validate_answer(answer, "y n");
+            answer = validate_answer("y n");
             if(answer == 'n')
             {
                 continue;
@@ -85,7 +93,7 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             }
             cout << "\nBlacklist contains: \n";
             int position = 1;
-            for(string blacklist_item : blacklisted_list)
+            for(const string& blacklist_item : blacklisted_list)
             {
                 cout << position << ": " <<blacklist_item << "\n";
                 position++;
@@ -94,24 +102,37 @@ void blacklist_change(std::vector<string>& blacklisted_list)
             cout << "Put the number of a category you want to delete. (Yor put -1 to go back to cancel): ";
             int number;
             cin >> number;
+            while(cin.fail())
+            {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max());
+                cout << "Please enter a number: ";
+                cin >> number;
+            }
             if(number == -1)
             {
                 answer = ' ';
                 continue;
             }
             
-            while(number-1 < 0 || number-1 > blacklisted_list.size())
+            while(number < 1 || number > blacklisted_list.size())
             {
                 cout << "Please provide valid number on the list: ";
                 cin >> number;
+                while(cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(std::numeric_limits<std::streamsize>::max());
+                    cout << "Please enter a number: ";
+                    cin >> number;
+                }
             }
             
             blacklisted_list.erase(blacklisted_list.begin() + number - 1);
             
             cout << "Delete another one?\n";
             cout << "(y/n): ";
-            cin >> answer;
-            validate_answer(answer, "y n");
+            answer = validate_answer("y n");
             if(answer == 'n')
             {
                 continue;
